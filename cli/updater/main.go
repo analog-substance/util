@@ -17,11 +17,10 @@ import (
 	"time"
 )
 
-func SelfUpdate() {
+func SelfUpdate(check bool) {
 	buildInfo, ok := debug.ReadBuildInfo()
 
 	if ok {
-
 		mod := buildInfo.Main.Path
 		modURL, err := url.Parse(fmt.Sprintf("https://%s", mod))
 		if err != nil {
@@ -46,12 +45,16 @@ func SelfUpdate() {
 			}
 
 			if isNewerVersion(buildInfo.Main.Version, releaseInfo.Name) {
-				err = goInstall(fmt.Sprintf("%s@latest", buildInfo.Main.Path))
-				if err != nil {
-					log.Fatal(err)
+				if check {
+					fmt.Printf("%s is outdated. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
+				} else {
+					err = goInstall(fmt.Sprintf("%s@latest", buildInfo.Main.Path))
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
 			} else {
-				fmt.Sprintf("%s already at latest (%s)", buildInfo.Main.Version, releaseInfo.Name)
+				fmt.Printf("%s  is up to date. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
 			}
 		} else {
 			log.Panic("Unable to autoupdate non-github based projects.")

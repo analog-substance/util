@@ -11,6 +11,11 @@ var CobraUpdateCmd = &cobra.Command{
 	Short: "update",
 	Long:  `Update`,
 	Run: func(cmd *cobra.Command, args []string) {
-		updater.SelfUpdate()
+		check, _ := cmd.Flags().GetBool("check")
+		updater.SelfUpdate(check)
 	},
+}
+
+func init() {
+	CobraUpdateCmd.Flags().BoolP("check", "C", false, "Check for update")
 }
