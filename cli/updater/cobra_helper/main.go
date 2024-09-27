@@ -34,6 +34,6 @@ var CobraUpdateCmd = &cobra.Command{
 func init() {
 	CobraUpdateCmd.Flags().BoolP("check", "C", false, "Check for update")
 	CobraUpdateCmd.Flags().BoolP("download-release", "r", false, "Download release instead of go build")
-	CobraUpdateCmd.Flags().StringP("url", "u", "", "URL to check for updates")
-	CobraUpdateCmd.Flags().StringP("force", "f", "", "Force update, even if release is not newer")
+	CobraUpdateCmd.Flags().StringP("url", "u", "", "URL to download from (force implies)")
+	CobraUpdateCmd.Flags().BoolP("force", "f", false, "Force update, even if release is not newer")
 }
