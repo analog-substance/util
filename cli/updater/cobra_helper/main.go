@@ -12,10 +12,28 @@ var CobraUpdateCmd = &cobra.Command{
 	Long:  `Update`,
 	Run: func(cmd *cobra.Command, args []string) {
 		check, _ := cmd.Flags().GetBool("check")
-		updater.SelfUpdate(check)
+		downloadRelease, _ := cmd.Flags().GetBool("download-release")
+		force, _ := cmd.Flags().GetBool("force")
+		url, _ := cmd.Flags().GetString("url")
+
+		var flag updater.OptionsFlag
+		if downloadRelease {
+			flag = flag | updater.OptionsRelease
+		}
+		if force {
+			flag = flag | updater.OptionsForce
+		}
+		if check {
+			flag = flag | updater.OptionsCheck
+		}
+
+		updater.SelfUpdate(flag, url)
 	},
 }
 
 func init() {
 	CobraUpdateCmd.Flags().BoolP("check", "C", false, "Check for update")
+	CobraUpdateCmd.Flags().BoolP("download-release", "r", false, "Download release instead of go build")
+	CobraUpdateCmd.Flags().StringP("url", "u", "", "URL to check for updates")
+	CobraUpdateCmd.Flags().StringP("force", "f", "", "Force update, even if release is not newer")
 }

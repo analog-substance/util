@@ -1,6 +1,10 @@
 package updater
 
 import (
+	"archive/tar"
+	"archive/zip"
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	builder "github.com/NoF0rte/cmd-builder"
@@ -10,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -17,7 +22,39 @@ import (
 	"time"
 )
 
-func SelfUpdate(check bool) {
+type OptionsFlag int32
+
+const (
+	OptionsCheck OptionsFlag = 1 << iota
+	OptionsForce
+	OptionsRelease
+)
+
+func SelfUpdate(options OptionsFlag, releaseURL string) {
+
+	executablePath, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+	filename := filepath.Base(executablePath)
+
+	if releaseURL != "" {
+		log.Println("Downloading release from:", releaseURL)
+		resp, err := http.Get(releaseURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
+		downloadBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		replaceExecutableFile(executablePath, downloadBytes)
+
+		return
+	}
+
 	buildInfo, ok := debug.ReadBuildInfo()
 
 	if ok {
@@ -29,6 +66,7 @@ func SelfUpdate(check bool) {
 
 		if modURL.Host == "github.com" {
 			gitHubAPIURL := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", modURL.Path[1:])
+
 			resp, err := http.Get(gitHubAPIURL)
 			if err != nil {
 				log.Fatal(err)
@@ -44,13 +82,95 @@ func SelfUpdate(check bool) {
 				log.Fatal(err)
 			}
 
-			if isNewerVersion(buildInfo.Main.Version, releaseInfo.Name) {
-				if check {
+			if isNewerVersion(buildInfo.Main.Version, releaseInfo.Name) || options&OptionsForce != 0 {
+				if options&OptionsCheck != 0 {
 					fmt.Printf("%s is outdated. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
 				} else {
-					err = goInstall(fmt.Sprintf("%s@latest", buildInfo.Main.Path))
-					if err != nil {
-						log.Fatal(err)
+					if options&OptionsRelease != 0 {
+						log.Println("download release", executablePath, filename)
+						for _, asset := range releaseInfo.Assets {
+
+							lowerAsset := strings.ToLower(asset.Name)
+							arch := runtime.GOARCH
+							if arch == "amd64" {
+								arch = "x86_64"
+							}
+							if strings.Contains(lowerAsset, runtime.GOOS) && strings.Contains(lowerAsset, arch) {
+								log.Println("download asset", asset.Name)
+								resp, err := http.Get(asset.BrowserDownloadUrl)
+								if err != nil {
+									log.Fatal(err)
+								}
+								defer resp.Body.Close()
+								downloadBytes, err := io.ReadAll(resp.Body)
+								if err != nil {
+									log.Fatal(err)
+								}
+
+								if asset.ContentType == "application/zip" {
+									// unzip
+									archive, err := zip.NewReader(bytes.NewReader(downloadBytes), int64(len(downloadBytes)))
+									if err != nil {
+										log.Fatal(err)
+									}
+									for _, zf := range archive.File {
+										if zf.Name == filename {
+											binBytes, err := readZipFile(zf)
+											if err != nil {
+												log.Fatal(err)
+											}
+
+											replaceExecutableFile(executablePath, binBytes)
+											return
+										}
+									}
+
+								} else if asset.ContentType == "application/gzip" {
+									// gunzip
+									uncompressed, err := gzip.NewReader(bytes.NewReader(downloadBytes))
+									if err != nil {
+										log.Fatal(err)
+									}
+									tarReader := tar.NewReader(uncompressed)
+									for true {
+										header, err := tarReader.Next()
+										if err == io.EOF {
+											break
+										}
+
+										if err != nil {
+											log.Fatal(err)
+										}
+
+										if header.Name != filename {
+											continue
+										}
+
+										switch header.Typeflag {
+										case tar.TypeReg:
+											binBytes, err := io.ReadAll(tarReader)
+											if err != nil {
+												log.Fatal(err)
+											}
+											replaceExecutableFile(executablePath, binBytes)
+											return
+										default:
+											log.Fatalf(
+												"ExtractTarGz: uknown type: %s in %s",
+												header.Typeflag,
+												header.Name)
+										}
+									}
+								}
+							}
+						}
+					} else {
+						log.Println("Using go install...")
+
+						err = goInstall(fmt.Sprintf("%s@latest", buildInfo.Main.Path))
+						if err != nil {
+							log.Fatal(err)
+						}
 					}
 				}
 			} else {
@@ -165,4 +285,31 @@ func isNewerVersion(currentVersion, versionToCompare string) bool {
 	}
 
 	return false
+}
+
+func readZipFile(zf *zip.File) ([]byte, error) {
+	f, err := zf.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return io.ReadAll(f)
+}
+
+func replaceExecutableFile(executablePath string, fileBytes []byte) {
+	err := os.WriteFile(executablePath+".new", fileBytes, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mvCmd := "mv"
+	if runtime.GOOS == "windows" {
+		mvCmd += "move"
+	}
+
+	err = builder.Cmd(mvCmd, executablePath+".new", executablePath).Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
