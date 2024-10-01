@@ -83,6 +83,7 @@ func SelfUpdate(options OptionsFlag, releaseURL string) {
 			}
 
 			if isNewerVersion(buildInfo.Main.Version, releaseInfo.Name) || options&OptionsForce != 0 {
+				log.Printf("Updating from %s to %s (forced:%t)", buildInfo.Main.Version, releaseInfo.Name, options&OptionsForce != 0)
 				if options&OptionsCheck != 0 {
 					fmt.Printf("%s is outdated. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
 				} else {
