@@ -133,7 +133,7 @@ func SelfUpdate(options OptionsFlag, releaseURL string) {
 										log.Fatal(err)
 									}
 									tarReader := tar.NewReader(uncompressed)
-									for true {
+									for {
 										header, err := tarReader.Next()
 										if err == io.EOF {
 											break
@@ -157,7 +157,7 @@ func SelfUpdate(options OptionsFlag, releaseURL string) {
 											return
 										default:
 											log.Fatalf(
-												"ExtractTarGz: uknown type: %s in %s",
+												"ExtractTarGz: uknown type: %x in %s",
 												header.Typeflag,
 												header.Name)
 										}

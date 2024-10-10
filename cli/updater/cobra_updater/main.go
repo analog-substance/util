@@ -12,28 +12,22 @@ var CobraUpdateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update {{.Use}} to latest version",
 	Long: `Update or check for updates.
-The default update method is to download the latest release from GitHub.
-
-Example 1: Update to latest GitHub
-
-	{{.Use}} update
-
-Example 2: Use go install to update
-
-	{{.Use}} update -g
+The default update method is to download the latest release from GitHub.`,
+	Example: `# Update to latest version
+{{.Use}} update
 
 
-Example 3: Download from a specific URL
+# Use go install to update
+{{.Use}} update -g
 
-Not sure why anyone else would need this. I use it for quickly testing builds
-on different machines.
 
-	{{.Use}} update -u http://10.0.0.2:8000/dist/carbon_darwin_arm64/carbon
+# Download from a specific URL
+# Not sure why anyone else would need this. I use it for quickly testing builds on different machines.
+{{.Use}} update -u http://10.0.0.2:8000/dist/carbon_darwin_arm64/carbon
 
-This is typically used after I run the following:
-
-	goreleaser release --clean --snapshot
-	python -m http.server
+# This is typically used after I run the following:
+#	goreleaser release --clean --snapshot
+#	python -m http.server
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -66,19 +60,29 @@ func init() {
 
 func AddToRootCmd(rootCmd *cobra.Command) {
 
-	tmpl, err := template.New("completion").Parse(CobraUpdateCmd.Long)
+	longTmpl, err := template.New("long").Parse(CobraUpdateCmd.Long)
+	if err != nil {
+		panic(err)
+	}
+	exampleTmpl, err := template.New("example").Parse(CobraUpdateCmd.Example)
 	if err != nil {
 		panic(err)
 	}
 
-	var templateResults bytes.Buffer
+	var longTmplResult bytes.Buffer
+	var exampleTmplResult bytes.Buffer
 
-	err = tmpl.Execute(&templateResults, rootCmd)
+	err = longTmpl.Execute(&longTmplResult, rootCmd)
 	if err != nil {
 		panic(err)
 	}
 
-	CobraUpdateCmd.Long = templateResults.String()
+	err = exampleTmpl.Execute(&exampleTmplResult, rootCmd)
+	if err != nil {
+		panic(err)
+	}
+	CobraUpdateCmd.Long = longTmplResult.String()
+	CobraUpdateCmd.Example = exampleTmplResult.String()
 
 	rootCmd.AddCommand(CobraUpdateCmd)
 }
