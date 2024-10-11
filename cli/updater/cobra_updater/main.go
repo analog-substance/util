@@ -68,9 +68,13 @@ func AddToRootCmd(rootCmd *cobra.Command) {
 	if err != nil {
 		panic(err)
 	}
-
+	shortTmpl, err := template.New("short").Parse(CobraUpdateCmd.Short)
+	if err != nil {
+		panic(err)
+	}
 	var longTmplResult bytes.Buffer
 	var exampleTmplResult bytes.Buffer
+	var shortTmplResult bytes.Buffer
 
 	err = longTmpl.Execute(&longTmplResult, rootCmd)
 	if err != nil {
@@ -81,8 +85,13 @@ func AddToRootCmd(rootCmd *cobra.Command) {
 	if err != nil {
 		panic(err)
 	}
+
+	err = shortTmpl.Execute(&shortTmplResult, rootCmd)
+	if err != nil {
+		panic(err)
+	}
 	CobraUpdateCmd.Long = longTmplResult.String()
 	CobraUpdateCmd.Example = exampleTmplResult.String()
-
+	CobraUpdateCmd.Short = shortTmplResult.String()
 	rootCmd.AddCommand(CobraUpdateCmd)
 }
