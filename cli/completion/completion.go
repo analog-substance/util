@@ -31,7 +31,7 @@ Zsh:
 	echo "autoload -U compinit; compinit" >> ~/.zshrc
 
 	# To load completions for each session, execute once:
-	{{.Use}} completion zsh > "${fpath[1]}/{{.Use}}"
+	{{.Use}} completion zsh > "${fpath[1]}/_{{.Use}}"
 
 	# You will need to start a new shell for this setup to take effect.
 
