@@ -20,3 +20,7 @@ func WriteLowerUniqueLines(path string, lines []string) error {
 	sortedUnique := string_utils.SortedLowerUnique(lines)
 	return os.WriteFile(path, []byte(strings.Join(sortedUnique, "\n")+"\n"), DefaultFilePerms)
 }
+
+func WriteString(path string, content string) error {
+	return os.WriteFile(path, []byte(content), DefaultFilePerms)
+}
