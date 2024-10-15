@@ -6,7 +6,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/analog-substance/util/file_utils"
+	"github.com/analog-substance/util/fileutil"
 )
 
 func Lines(path string, re *regexp.Regexp) ([]string, error) {
@@ -34,7 +34,7 @@ func FileLines(r io.Reader, re *regexp.Regexp) []string {
 
 // LineByLine returns each line of the file matching the regex
 func LineByLine(path string, re *regexp.Regexp) (chan string, error) {
-	lineChan, err := file_utils.ReadLineByLineChan(path)
+	lineChan, err := fileutil.ReadLineByLineChan(path)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func LineByLine(path string, re *regexp.Regexp) (chan string, error) {
 }
 
 func FileLineByLine(r io.Reader, re *regexp.Regexp) chan string {
-	lines := file_utils.ReadLineByLineChanReader(r)
+	lines := fileutil.ReadLineByLineChanReader(r)
 	matches := make(chan string)
 	go func() {
 		defer close(matches)

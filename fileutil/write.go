@@ -1,4 +1,4 @@
-package file_utils
+package fileutil
 
 import (
 	"github.com/analog-substance/util/string_utils"
