@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/NoF0rte/cmd-builder v0.0.0-20220305223538-e35bfeabbbff
 	github.com/charmbracelet/glamour v0.8.0
+	github.com/otiai10/copy v1.14.0
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/term v0.22.0
 	golang.org/x/text v0.19.0
@@ -30,5 +31,6 @@ require (
 	github.com/yuin/goldmark v1.7.4 // indirect
 	github.com/yuin/goldmark-emoji v1.0.3 // indirect
 	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 )

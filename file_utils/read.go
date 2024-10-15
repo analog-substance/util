@@ -127,3 +127,36 @@ func ReadLineByLineReader(file io.Reader, action func(line string)) error {
 	}
 	return scanner.Err()
 }
+
+func ReadLineByLineChan(path string) (chan string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Not sure if this is the best way to re-use ReadLineByLine
+	c := make(chan string)
+	go func() {
+		defer file.Close()
+
+		for s := range ReadLineByLineChanReader(file) {
+			c <- s
+		}
+		close(c)
+	}()
+
+	return c, nil
+}
+
+func ReadLineByLineChanReader(r io.Reader) chan string {
+	c := make(chan string)
+	go func() {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			c <- scanner.Text()
+		}
+		close(c)
+	}()
+
+	return c
+}
