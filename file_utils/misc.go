@@ -100,3 +100,14 @@ func HasStdin() bool {
 
 	return isPipedFromChrDev || isPipedFromFIFO
 }
+
+func MkdirAll(dirs ...string) []error {
+	var errors []error
+	for _, dir := range dirs {
+		err := os.MkdirAll(dir, DefaultDirPerms)
+		if err != nil {
+			errors = append(errors, err)
+		}
+	}
+	return errors
+}
