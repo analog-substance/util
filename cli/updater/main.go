@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	builder "github.com/NoF0rte/cmd-builder"
+	"github.com/analog-substance/util/cli/version"
 	"io"
 	"log"
 	"net/http"
@@ -30,7 +31,7 @@ const (
 	OptionsRelease
 )
 
-func SelfUpdate(options OptionsFlag, releaseURL string) {
+func SelfUpdate(options OptionsFlag, releaseURL string, info version.Info) {
 
 	executablePath, err := os.Executable()
 	if err != nil {
@@ -82,10 +83,10 @@ func SelfUpdate(options OptionsFlag, releaseURL string) {
 				log.Fatal(err)
 			}
 
-			if isNewerVersion(buildInfo.Main.Version, releaseInfo.Name) || options&OptionsForce != 0 {
-				log.Printf("Updating from %s to %s (forced:%t)", buildInfo.Main.Version, releaseInfo.Name, options&OptionsForce != 0)
+			if isNewerVersion(info.Version, releaseInfo.Name) || options&OptionsForce != 0 {
+				log.Printf("Updating from %s to %s (forced:%t)", info.Version, releaseInfo.Name, options&OptionsForce != 0)
 				if options&OptionsCheck != 0 {
-					fmt.Printf("%s is outdated. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
+					fmt.Printf("%s is outdated. Current release version: %s\n", info.Version, releaseInfo.Name)
 				} else {
 					if options&OptionsRelease != 0 {
 						log.Println("download release", executablePath, filename)
@@ -175,7 +176,7 @@ func SelfUpdate(options OptionsFlag, releaseURL string) {
 					}
 				}
 			} else {
-				fmt.Printf("%s  is up to date. Current release version: %s\n", buildInfo.Main.Version, releaseInfo.Name)
+				fmt.Printf("%s is up to date. Current release version: %s\n", info.Version, releaseInfo.Name)
 			}
 		} else {
 			log.Panic("Unable to autoupdate non-github based projects.")

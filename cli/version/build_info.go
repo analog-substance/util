@@ -6,7 +6,13 @@ import (
 	"runtime/debug"
 )
 
-func GetVersionInfo(fallbackVersion, fallbackExtraDetails string) string {
+type Info struct {
+	Version string
+	Type    string
+	Extra   string
+}
+
+func GetVersion(fallbackVersion, fallbackExtraDetails string) Info {
 	buildInfo, ok := debug.ReadBuildInfo()
 	buildType := "unknown"
 	if ok {
@@ -37,5 +43,15 @@ func GetVersionInfo(fallbackVersion, fallbackExtraDetails string) string {
 		fmt.Println(buildInfo)
 	}
 
-	return fmt.Sprintf("%s (%s@%s)", fallbackVersion, buildType, fallbackExtraDetails)
+	return Info{
+		Version: fallbackVersion,
+		Type:    buildType,
+		Extra:   fallbackExtraDetails,
+	}
+}
+
+func GetVersionInfo(fallbackVersion, fallbackExtraDetails string) string {
+	versionInfo := GetVersion(fallbackVersion, fallbackExtraDetails)
+
+	return fmt.Sprintf("%s (%s@%s)", versionInfo.Version, versionInfo.Type, versionInfo.Extra)
 }

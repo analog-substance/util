@@ -3,9 +3,12 @@ package cobra_updater
 import (
 	"bytes"
 	"github.com/analog-substance/util/cli/updater"
+	"github.com/analog-substance/util/cli/version"
 	"github.com/spf13/cobra"
 	"text/template"
 )
+
+var versionInfo version.Info
 
 // CobraUpdateCmd represents the image command
 var CobraUpdateCmd = &cobra.Command{
@@ -47,7 +50,7 @@ The default update method is to download the latest release from GitHub.`,
 			flag = flag | updater.OptionsCheck
 		}
 
-		updater.SelfUpdate(flag, url)
+		updater.SelfUpdate(flag, url, versionInfo)
 	},
 }
 
@@ -58,7 +61,9 @@ func init() {
 	CobraUpdateCmd.Flags().BoolP("force", "f", false, "Force update, even if release is not newer")
 }
 
-func AddToRootCmd(rootCmd *cobra.Command) {
+func AddToRootCmd(rootCmd *cobra.Command, info version.Info) {
+
+	versionInfo = info
 
 	longTmpl, err := template.New("long").Parse(CobraUpdateCmd.Long)
 	if err != nil {
@@ -94,4 +99,5 @@ func AddToRootCmd(rootCmd *cobra.Command) {
 	CobraUpdateCmd.Example = exampleTmplResult.String()
 	CobraUpdateCmd.Short = shortTmplResult.String()
 	rootCmd.AddCommand(CobraUpdateCmd)
+
 }
