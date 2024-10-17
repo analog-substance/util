@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	builder "github.com/NoF0rte/cmd-builder"
-	"github.com/analog-substance/util/cli/version"
+	"github.com/analog-substance/util/cli/build_info"
 	"io"
 	"log"
 	"net/http"
@@ -31,7 +31,7 @@ const (
 	OptionsRelease
 )
 
-func SelfUpdate(options OptionsFlag, releaseURL string, info version.Info) {
+func SelfUpdate(options OptionsFlag, releaseURL string, info build_info.Version) {
 
 	executablePath, err := os.Executable()
 	if err != nil {

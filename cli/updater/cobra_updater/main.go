@@ -2,13 +2,13 @@ package cobra_updater
 
 import (
 	"bytes"
+	"github.com/analog-substance/util/cli/build_info"
 	"github.com/analog-substance/util/cli/updater"
-	"github.com/analog-substance/util/cli/version"
 	"github.com/spf13/cobra"
 	"text/template"
 )
 
-var versionInfo version.Info
+var versionInfo build_info.Version
 
 // CobraUpdateCmd represents the image command
 var CobraUpdateCmd = &cobra.Command{
@@ -61,7 +61,7 @@ func init() {
 	CobraUpdateCmd.Flags().BoolP("force", "f", false, "Force update, even if release is not newer")
 }
 
-func AddToRootCmd(rootCmd *cobra.Command, info version.Info) {
+func AddToRootCmd(rootCmd *cobra.Command, info build_info.Version) {
 
 	versionInfo = info
 

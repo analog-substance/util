@@ -1,4 +1,4 @@
-package version
+package build_info
 
 import (
 	"fmt"
@@ -6,13 +6,17 @@ import (
 	"runtime/debug"
 )
 
-type Info struct {
+type Version struct {
 	Version string
 	Type    string
 	Extra   string
 }
 
-func GetVersion(fallbackVersion, fallbackExtraDetails string) Info {
+func (v Version) String() string {
+	return fmt.Sprintf("%s (%s@%s)", v.Version, v.Type, v.Extra)
+}
+
+func GetVersion(fallbackVersion, fallbackExtraDetails string) Version {
 	buildInfo, ok := debug.ReadBuildInfo()
 	buildType := "unknown"
 	if ok {
@@ -43,15 +47,9 @@ func GetVersion(fallbackVersion, fallbackExtraDetails string) Info {
 		fmt.Println(buildInfo)
 	}
 
-	return Info{
+	return Version{
 		Version: fallbackVersion,
 		Type:    buildType,
 		Extra:   fallbackExtraDetails,
 	}
-}
-
-func GetVersionInfo(fallbackVersion, fallbackExtraDetails string) string {
-	versionInfo := GetVersion(fallbackVersion, fallbackExtraDetails)
-
-	return fmt.Sprintf("%s (%s@%s)", versionInfo.Version, versionInfo.Type, versionInfo.Extra)
 }
