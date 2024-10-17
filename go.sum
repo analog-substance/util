@@ -1,5 +1,7 @@
 github.com/NoF0rte/cmd-builder v0.0.0-20220305223538-e35bfeabbbff h1:GQV4BEXtKM7owGsl9LodHtQEA4+YmylqBIFbaDzA/4Q=
 github.com/NoF0rte/cmd-builder v0.0.0-20220305223538-e35bfeabbbff/go.mod h1:BW980ODOiAtIbHttRfkCrP+zdJAXjE5uEwzT73Xu98k=
+github.com/ahmetb/go-linq/v3 v3.2.0 h1:BEuMfp+b59io8g5wYzNoFe9pWPalRklhlhbiU3hYZDE=
+github.com/ahmetb/go-linq/v3 v3.2.0/go.mod h1:haQ3JfOeWK8HpVxMtHHEMPVgBKiYyQ+f1/kLZh/cj9U=
 github.com/alecthomas/assert/v2 v2.7.0 h1:QtqSACNS3tF7oasA8CU6A6sXZSBDqnm7RfpLl9bZqbE=
 github.com/alecthomas/assert/v2 v2.7.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
 github.com/alecthomas/chroma/v2 v2.14.0 h1:R3+wzpnUArGcQz7fCETQBzO5n9IMNi13iIs46aU4V9E=

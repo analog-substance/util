@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/NoF0rte/cmd-builder v0.0.0-20220305223538-e35bfeabbbff
+	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/charmbracelet/glamour v0.8.0
 	github.com/otiai10/copy v1.14.0
 	github.com/spf13/cobra v1.8.1
