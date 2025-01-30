@@ -26,7 +26,7 @@ The default update method is to download the latest release from GitHub.`,
 
 # Download from a specific URL
 # Not sure why anyone else would need this. I use it for quickly testing builds on different machines.
-{{.Use}} update -u http://10.0.0.2:8000/dist/carbon_darwin_arm64/carbon
+{{.Use}} update -u http://10.0.0.2:8000/dist/{{.Use}}_darwin_arm64/{{.Use}}
 
 # This is typically used after I run the following:
 #	goreleaser release --clean --snapshot
