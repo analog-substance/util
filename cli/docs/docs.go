@@ -8,7 +8,6 @@ import (
 	"golang.org/x/text/language"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -27,10 +26,10 @@ var CobraDocsCmd = &cobra.Command{
 		identity := func(s string) string { return s }
 		emptyStr := func(s string) string {
 
-			isRootCommand := strings.HasSuffix(s, "/_index.md")
+			isRootCommand := strings.HasSuffix(s, fmt.Sprintf("%c_index.md", os.PathSeparator))
 
 			titleCaser := cases.Title(language.English)
-			title := strings.TrimSuffix(strings.ReplaceAll(path.Base(s), "_", " "), markdownExtension)
+			title := strings.TrimSuffix(strings.ReplaceAll(filepath.Base(s), "_", " "), markdownExtension)
 
 			var prepend string
 			if isRootCommand {
@@ -59,7 +58,8 @@ var CobraDocsCmd = &cobra.Command{
 }
 
 func init() {
-	CobraDocsCmd.Flags().StringP("output-dir", "o", "./docs/docs/cli", "Output location")
+	outputPath := filepath.Join(".", "docs", "docs", "cli")
+	CobraDocsCmd.Flags().StringP("output-dir", "o", outputPath, "Output location")
 }
 
 const markdownExtension = ".md"
