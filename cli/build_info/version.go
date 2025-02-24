@@ -53,3 +53,14 @@ func GetVersion(fallbackVersion, fallbackExtraDetails string) Version {
 		Extra:   fallbackExtraDetails,
 	}
 }
+
+var loadedVersion Version
+
+func InitLoadedVersion(fallbackVersion, fallbackExtraDetails string) Version {
+	loadedVersion = GetVersion(fallbackVersion, fallbackExtraDetails)
+	return loadedVersion
+}
+
+func GetLoadedVersion() Version {
+	return loadedVersion
+}
