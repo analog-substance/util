@@ -306,7 +306,7 @@ func replaceExecutableFile(executablePath string, fileBytes []byte) {
 
 	mvCmd := "mv"
 	if runtime.GOOS == "windows" {
-		mvCmd += "move"
+		mvCmd = "move"
 	}
 
 	err = builder.Cmd(mvCmd, executablePath+".new", executablePath).Start()
