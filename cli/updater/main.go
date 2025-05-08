@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -279,7 +280,15 @@ func isNewerVersion(currentVersion, versionToCompare string) bool {
 	compareVer := strings.Split(strings.TrimPrefix(versionToCompare, "v"), ".")
 
 	for i, v := range currentVer {
-		if compareVer[i] > v {
+		currentInt, err := strconv.Atoi(v)
+		if err != nil {
+			return false
+		}
+		compareInt, err := strconv.Atoi(compareVer[i])
+		if err != nil {
+			return false
+		}
+		if compareInt > currentInt {
 			return true
 		} else if compareVer[i] < v {
 			return false
