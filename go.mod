@@ -1,6 +1,6 @@
 module github.com/analog-substance/util
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/NoF0rte/cmd-builder v0.0.0-20220305223538-e35bfeabbbff
@@ -8,8 +8,8 @@ require (
 	github.com/charmbracelet/glamour v0.10.0
 	github.com/otiai10/copy v1.14.1
 	github.com/spf13/cobra v1.10.1
-	golang.org/x/term v0.37.0
-	golang.org/x/text v0.31.0
+	golang.org/x/term v0.43.0
+	golang.org/x/text v0.37.0
 )
 
 require (
@@ -40,7 +40,7 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yuin/goldmark v1.7.13 // indirect
 	github.com/yuin/goldmark-emoji v1.0.6 // indirect
-	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 )
